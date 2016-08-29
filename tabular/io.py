@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Functions for :class:`tabular.tab.tabarray` i/o methods, including to/from 
 separated-value (CSV, e.g. ``.tsv``, ``.csv``) and other text files, as well as
@@ -7,7 +11,10 @@ binary files.
 
 import types
 import csv
-import cPickle
+try:
+	import pickle
+except NameError:
+	import cPickle as pickle
 import os
 import shutil
 import compiler
@@ -132,17 +139,17 @@ def loadSV(fname, shape=None, titles=None, aligned=False, byteorder=None,
         dtype = None
  
     if renamer is not None:
-        print 'Trying user-given renamer ...'
+        print('Trying user-given renamer ...')
         renamed = renamer(names)
         if len(renamed) == len(uniqify(renamed)):
             names = renamed
-            print '''... using renamed names (original names will be in return 
-                     metadata)'''
+            print('''... using renamed names (original names will be in return 
+                     metadata)''')
         else:
-            print '... renamer failed to produce unique names, not using.'
+            print('... renamer failed to produce unique names, not using.')
             
     if names and len(names) != len(uniqify(names)):
-        print 'Names are not unique, reverting to default naming scheme.'
+        print('Names are not unique, reverting to default naming scheme.')
         names = None
 
 
@@ -320,7 +327,7 @@ def loadSVcols(fname, usecols=None, excludecols=None, valuefixer=None,
     if max(getcols) > l0:
         bad = [i for i in getcols if i >= l0]
         getcols = [i for i in getcols if i < l0]
-        print 'Too many column names. Discarding columns,', bad
+        print('Too many column names. Discarding columns,', bad)
         
     metadatacolthreshold(metadata,getcols)
  
@@ -546,8 +553,7 @@ def loadSVrecs(fname, uselines=None, skiprows=0, linefixer=None,
         if linefixer:
             F = map(linefixer,F)
         if delimiter_regex:
-            F = map(lambda line: 
-                    delimiter_regex.sub(metadata['dialect'].delimiter, line), F)       
+            F = [delimiter_regex.sub(metadata['dialect'].delimiter, line) for line in F]       
         fh2.write('\n'.join(F))        
         fh2.seek(0)
         fh = fh2        
@@ -595,16 +601,16 @@ def getmetadata(fname, inflines=2500, linefixer=None, delimiter_regex=None,
     
     if storedmetadata:
         if verbosity > 7:
-            print '\n\nStored metadata read from file:', storedmetadata, '\n\n' 
+            print('\n\nStored metadata read from file:', storedmetadata, '\n\n') 
         for name in storedmetadata:
             if ((name in metadata.keys()) and (storedmetadata[name] != None) and 
                 (storedmetadata[name] != metadata[name])):
                 if verbosity >= 4:
-                    print '''WARNING:  A value for %s was found in metadata 
+                    print('''WARNING:  A value for %s was found in metadata 
                              read from special-format header in file %s as well 
                              as being provided explicitly, and read value 
                              differs from provided value.  Using provided 
-                             value.''' % (name, fname)
+                             value.''' % (name, fname))
             else:
                 metadata[name] = storedmetadata[name]
 
@@ -643,8 +649,8 @@ def getmetadata(fname, inflines=2500, linefixer=None, delimiter_regex=None,
                           (metadata['headerlines'] is None)):
             metadata['headerlines'] = 1
             if verbosity >= 6:
-                print '''... assuming "headerlines" = 1, since 
-                         "namesinheader" = True.'''  
+                print('''... assuming "headerlines" = 1, since 
+                         "namesinheader" = True.''')  
     
     delimiter_infer = False
     if 'dialect' not in metadata.keys():
@@ -672,7 +678,7 @@ def getmetadata(fname, inflines=2500, linefixer=None, delimiter_regex=None,
         indicating no headerline present at all.'''
         metadata['names'] = F[metadata['headerlines'] - 1]
         if verbosity > 1:
-            print 'Inferring names from the last header line (line', metadata['headerlines'], ').'
+            print('Inferring names from the last header line (line', metadata['headerlines'], ').')
 
     processmetadata(metadata, items='names,formats,types', comments=comments, 
                     delimiter_regex=delimiter_regex, verbosity=verbosity)
@@ -683,11 +689,11 @@ def getmetadata(fname, inflines=2500, linefixer=None, delimiter_regex=None,
 def printdialectinferencemessage(dialect, verbosity, delimiter_regex):
     if 8 > verbosity > 2:  
         if delimiter_regex:
-            print 'Using delimiter_regex with representative delimiter ' + repr(dialect.delimiter)
+            print('Using delimiter_regex with representative delimiter ' + repr(dialect.delimiter))
         else:
-            print 'Inferring delimiter to be ' + repr(dialect.delimiter)
+            print('Inferring delimiter to be ' + repr(dialect.delimiter))
     elif verbosity >= 8:
-        print 'Inferring dialect with values:', printdialect(dialect)
+        print('Inferring dialect with values:', printdialect(dialect))
 
 
 def printdelimitercheckmessage(dialect,infdia,storedmetadata,verbosity):
@@ -695,11 +701,11 @@ def printdelimitercheckmessage(dialect,infdia,storedmetadata,verbosity):
         if verbosity >= 5:
             if (storedmetadata and ('delimiter' in storedmetadata.keys()) and 
                 (infdia.delimiter == storedmetadata['delimiter'])):
-                print '''Inferred delimiter differs from given delimiter but 
+                print('''Inferred delimiter differs from given delimiter but 
                          equals delimiter read from metadata in file.  Are you 
-                         sure you haven\'t made a mistake?'''
+                         sure you haven\'t made a mistake?''')
             else:
-                print 'Inferred delimiter differs from given delimiter.'
+                print('Inferred delimiter differs from given delimiter.')
 
 
 def saveSV(fname, X, comments=None, metadata=None, printmetadict=None,
@@ -815,14 +821,14 @@ def saveSV(fname, X, comments=None, metadata=None, printmetadict=None,
         if printmetadict is None:
             printmetadict = False
             if verbosity > 8:
-                print '''Defaulting to not printing out the metametadata 
-                         dictionary line.'''
+                print('''Defaulting to not printing out the metametadata 
+                         dictionary line.''')
         if comments is None:
             comments = ''
             if verbosity > 8:
-                print 'Defaulting empty comment string.'
+                print('Defaulting empty comment string.')
         if verbosity > 7:
-            print 'Defaulting to writing out names metadata.'
+            print('Defaulting to writing out names metadata.')
     elif metadata is True:
         
         metakeys = defaultmetadatakeys(X)
@@ -830,20 +836,20 @@ def saveSV(fname, X, comments=None, metadata=None, printmetadict=None,
         if printmetadict is None:
             printmetadict = True
             if verbosity > 8:
-                print '''Defaulting to printing out the metametadata dictionary 
-                         line.'''
+                print('''Defaulting to printing out the metametadata dictionary 
+                         line.''')
         if comments is None:
             comments = ''
             if verbosity > 8:
-                print 'Defaulting empty comment string.'            
+                print('Defaulting empty comment string.')            
         if verbosity >= 5:
-            print 'Writing out all present metadata keys ... '
+            print('Writing out all present metadata keys ... ')
     elif metadata is False:
         metakeys = []
         printmetadict = False
         comments = ''
         if verbosity >= 5:
-            print 'Writing out no metadata at all.'
+            print('Writing out no metadata at all.')
     else:
         metakeys = metadata
         if printmetadict is None:
@@ -854,8 +860,8 @@ def saveSV(fname, X, comments=None, metadata=None, printmetadict=None,
         if comments is None:
             comments = ''
         if verbosity >= 5:
-            print '''Using user-specified metadata keys to contol metadata 
-                     writing.'''
+            print('''Using user-specified metadata keys to contol metadata 
+                     writing.''')
             
     assert lineterminator in ['\r','\n','\r\n'], '''lineterminator must be one 
                                               of ''' + repr( ['\r','\n','\r\n'])
@@ -864,9 +870,9 @@ def saveSV(fname, X, comments=None, metadata=None, printmetadict=None,
     delimiter = dialect.delimiter     
     
     if 6 > verbosity > 2:
-        print 'Using delimiter ', repr(delimiter)
+        print('Using delimiter ', repr(delimiter))
     elif verbosity >= 6:
-        print 'Using dialect with values:', repr(printdialect(dialect))
+        print('Using dialect with values:', repr(printdialect(dialect)))
             
     metadata = getstringmetadata(X,metakeys,dialect)
     
@@ -1084,7 +1090,7 @@ def inferdialect(fname=None, datalines=None, delimiter_regex=None,
             return G[V.argmin()]
         else:
             if verbosity > 2:
-                print 'dialect inference failed, infering dialect to be', inferdelimiterfromname(fname) , 'from filename extension.'
+                print('dialect inference failed, infering dialect to be', inferdelimiterfromname(fname) , 'from filename extension.')
             return csv.Sniffer().sniff(inferdelimiterfromname(fname))
 
 
@@ -1118,18 +1124,18 @@ def readstoredmetadata(fname, skiprows=0, linenumber=None, comments='#',
                         phlines.append(line)
                 if len(phlines) == 1:
                     if verbosity >= 10:
-                        print '''Looking for metametadata on line 0 
-                                 (no comment lines present).'''
+                        print('''Looking for metametadata on line 0 
+                                 (no comment lines present).''')
                 else:
                     if verbosity >= 9:
-                        print '''Searching for metametadata lines up to 
+                        print('''Searching for metametadata lines up to 
                                  and including line %d where comments 
-                                 end.''' % (len(phlines) - 1)
+                                 end.''' % (len(phlines) - 1))
             else:
                 phlines = [fh.readline()]
                 if verbosity >=9:
-                    print '''No comments found, looking for metametadata on 
-                             line 0.'''
+                    print('''No comments found, looking for metametadata on 
+                             line 0.''')
         else:
             for _ind in range(linenumber):
                 fh.readline()
@@ -1148,9 +1154,9 @@ def readstoredmetadata(fname, skiprows=0, linenumber=None, comments='#',
                         pass
                     else:
                         if IsMetaMetaDict(X):
-                            exec metametaline
+                            exec(metametaline)
                             if verbosity > 6:
-                                print 'Found valid metametadata at line', ln, 'in file.  Metametadata is:', metametadata
+                                print('Found valid metametadata at line', ln, 'in file.  Metametadata is:', metametadata)
                             break
    
     if metametadata:
@@ -1232,11 +1238,11 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
         else:
             comments = '#'
             if verbosity > 8:
-                print 'processing metadata with comments char = #'
+                print('processing metadata with comments char = #')
     else:
         if (('comments' in metadata.keys()) and 
             (comments != metadata['comments']) and (verbosity > 8)):
-            print 'comments character specified to process metadata (', repr(comments) ,') is different from comments charcater set in metadata dictionary (', repr(metadata['comments']) , ').'
+            print('comments character specified to process metadata (', repr(comments) ,') is different from comments charcater set in metadata dictionary (', repr(metadata['comments']) , ').')
     
     if not items:
         for k in metadata.keys():
@@ -1251,12 +1257,12 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                 if D:
                     metadata['dialect'] = D
                     if (verbosity > 8):
-                        print 'processed dialect from string'
+                        print('processed dialect from string')
                         
                 else:
                     if (verbosity > 8):
-                        print '''Dialect failed to be converted properly from 
-                                 string representation in metadata.'''
+                        print('''Dialect failed to be converted properly from 
+                                 string representation in metadata.''')
 
             if 'delimiter' in dir(metadata['dialect']):
                 for a in dir(metadata['dialect']):
@@ -1264,11 +1270,11 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                         setattr(metadata['dialect'],a, metadata[a])
                         if ((verbosity > 2 and a == 'delimiter') or 
                             (verbosity >= 8)):
-                            print 'Setting dialect attribute', a, 'to equal specified value:', repr(metadata[a])
+                            print('Setting dialect attribute', a, 'to equal specified value:', repr(metadata[a]))
                     elif not a.startswith('_') and a not in metadata.keys():
                         metadata[a] = getattr(metadata['dialect'], a)
                         if ((verbosity > 2 and a == 'delimiter') or (verbosity >= 8)):
-                            print 'Setting metadata attribute from dialect', a , 'to equal specified value:', repr(metadata[a])
+                            print('Setting metadata attribute from dialect', a , 'to equal specified value:', repr(metadata[a]))
 
     if (not items or 'names' in items) and ('names' in metadata.keys()): 
         if is_string_like(metadata['names']):
@@ -1282,7 +1288,7 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                 metadata['names'] = list(csv.reader([n.lstrip(comments)],      
                                                      dialect=d))[0]
                 if (verbosity > 8):
-                    print '... splitting "names" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['names']
+                    print('... splitting "names" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['names'])
 
     if (not items or 'formats' in items) and 'formats' in metadata.keys(): 
         if is_string_like(metadata['formats']):   
@@ -1295,7 +1301,7 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                                            dialect=d))[0]
 
                 if (verbosity > 8):
-                    print '... splitting "formats" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['formats']       
+                    print('... splitting "formats" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['formats'])       
  
         if ncols:
             metadata['formats'] = postprocessformats(metadata['formats'],ncols)
@@ -1312,7 +1318,7 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                 metadata['types'] = list(csv.reader([n.lstrip(comments)],  
                                          dialect=d))[0]
                 if (verbosity > 8):
-                    print '... splitting "types" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['types']      
+                    print('... splitting "types" metadata from string with delimiter', repr(d.delimiter), '. Resulting names:', metadata['types'])      
         
         if ncols:
             metadata['types'] = postprocessformats(metadata['types'],ncols)
@@ -1323,10 +1329,10 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
             if C:
                 metadata['coloring'] = C
                 if (verbosity > 8):  
-                    print '... processed coloring from string'
+                    print('... processed coloring from string')
             else:
                 if verbosity > 1:
-                    print 'Coloring failed to be converted properly from string representation in metadata ; removing coloring data from active metadata (putting it in "loaded_coloring").'
+                    print('Coloring failed to be converted properly from string representation in metadata ; removing coloring data from active metadata (putting it in "loaded_coloring").')
                     metadata['loaded_coloring'] = metadata['coloring']
                     metadata.pop('coloring')
 
@@ -1338,7 +1344,7 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                     metadata['headerlines'] = int(h.lstrip(comments))
                 except (ValueError,TypeError):
                     if verbosity > 6:
-                        print 'headerlines metadata failed to convert to an integer.'
+                        print('headerlines metadata failed to convert to an integer.')
                 else:
                     pass
                         
@@ -1351,7 +1357,7 @@ def processmetadata(metadata, items=None, comments=None, delimiter_regex=None,
                                                if isinstance(v, int) else max(v) 
                                                for v in mmd.values()]))
                     if ((metadata['headerlines'] > h) and (verbosity > 8)):
-                        print 'Resetting headerlines from', h, 'to', metadata['headerlines'], 'because of line number indications from metametadata.'
+                        print('Resetting headerlines from', h, 'to', metadata['headerlines'], 'because of line number indications from metametadata.')
 
 
 def postprocessformats(formats, ncols):
@@ -1413,7 +1419,7 @@ def inferheader(lines, comments=None, metadata=None,
         
     if (comments != ''):
         if (cc < len(lines)):
-            for l in xrange(cc,len(lines)):
+            for l in range(cc,len(lines)):
                 if not lines[l].startswith(comments):
                     break
         else:
@@ -1422,7 +1428,7 @@ def inferheader(lines, comments=None, metadata=None,
     if (l > 0):
         return l
     else:
-        for j in xrange(min(1000, len(lines))):
+        for j in range(min(1000, len(lines))):
             hasheader = 'unset'
             for k in [100, 200, 400, 800, 1600]:
                 F = '\n'.join(lines[j:(j+k)])
@@ -1592,7 +1598,7 @@ def getstringmetadata(X, metakeys, dialect):
                 metadata[k] = (X.metadata[k] if is_string_like(X.metadata[k]) 
                                else repr(X.metadata[k]))
             else:
-                print 'metadata key', k,'not found'
+                print('metadata key', k,'not found')
 
     return metadata
     
@@ -1608,9 +1614,9 @@ def appendSV(fname, X, **md):
                 Write(X, F, md['dialect'], order=names)
                 F.close()
             else:
-                raise ValueError, 'names don\'t match:' + str(names) + ', ' + str(X.dtype.names)
+                raise ValueError('names don\'t match:' + str(names) + ', ' + str(X.dtype.names))
         else:
-            raise ValueError, 'names can\'t be read'    
+            raise ValueError('names can\'t be read')    
     else:
         saveSV(fname,X,**md)
         

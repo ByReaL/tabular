@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 '''
 Class and functions pertaining to the tabular.tabarray class.
 
@@ -63,8 +67,8 @@ def modifydocs(a, b, desc=''):
 			New docstring for `a`.
 
     """
-    newdoc = a.func_doc.replace('\t\t', '\t')
-    newdoc += "Documentation from " + desc + ":\n" + b.func_doc
+    newdoc = a.__doc__.replace('\t\t', '\t')
+    newdoc += "Documentation from " + desc + ":\n" + b.__doc__
     return newdoc
 
 def tab_colstack(ListOfTabArrays, mode='abort'):
@@ -102,7 +106,7 @@ def tab_colstack(ListOfTabArrays, mode='abort'):
     data = data.view(tabarray)
     data.coloring = coloring
     return data
-tab_colstack.func_doc = modifydocs(tab_colstack, spreadsheet.colstack, 
+tab_colstack.__doc__ = modifydocs(tab_colstack, spreadsheet.colstack, 
                                    ":func:`tabular.spreadsheet.colstack`")
 
 def tab_rowstack(ListOfTabArrays, mode='nulls'):
@@ -136,7 +140,7 @@ def tab_rowstack(ListOfTabArrays, mode='nulls'):
     data = data.view(tabarray)
     data.coloring = coloring
     return data
-tab_rowstack.func_doc = modifydocs(tab_rowstack, spreadsheet.rowstack, 
+tab_rowstack.__doc__ = modifydocs(tab_rowstack, spreadsheet.rowstack, 
                                    ":func:`tabular.spreadsheet.rowstack`")
 
 def tab_join(ToMerge, keycols=None, nullvals=None, renamer=None, 
@@ -619,7 +623,7 @@ class tabarray(np.ndarray):
         data = data.view(tabarray)
         data.coloring = self.coloring
         return data
-    addrecords.func_doc = modifydocs(addrecords, spreadsheet.addrecords, 
+    addrecords.__doc__ = modifydocs(addrecords, spreadsheet.addrecords, 
                                      ":func:`tabular.spreadsheet.addrecords`")
 
     def addcols(self, cols, names=None):
@@ -635,7 +639,7 @@ class tabarray(np.ndarray):
         data = data.view(tabarray)
         data.coloring = self.coloring
         return data
-    addcols.func_doc = modifydocs(addcols, spreadsheet.addcols, 
+    addcols.__doc__ = modifydocs(addcols, spreadsheet.addcols, 
                                   ":func:`tabular.spreadsheet.addcols`")
 
     def deletecols(self, cols):
@@ -652,7 +656,7 @@ class tabarray(np.ndarray):
         deletenames = utils.uniqify(utils.listunion([[c] if c in 
         self.dtype.names else self.coloring[c] for c in cols]))
         return spreadsheet.deletecols(self,deletenames)
-    deletecols.func_doc = modifydocs(deletecols, spreadsheet.deletecols, 
+    deletecols.__doc__ = modifydocs(deletecols, spreadsheet.deletecols, 
                                      ":func:`tabular.spreadsheet.deletecols`")
 
     def renamecol(self, old, new):
@@ -669,7 +673,7 @@ class tabarray(np.ndarray):
             if old in self.coloring[x]:
                 ind = self.coloring[x].index(old)
                 self.coloring[x][ind] = new
-    renamecol.func_doc = modifydocs(renamecol, spreadsheet.renamecol, 
+    renamecol.__doc__ = modifydocs(renamecol, spreadsheet.renamecol, 
                                     ":func:`tabular.spreadsheet.renamecol`")
 
     def saveSV(self, fname, comments=None, metadata=None, printmetadict=None,
@@ -690,7 +694,7 @@ class tabarray(np.ndarray):
         io.saveSV(fname,self, comments, metadata, printmetadict, 
                         dialect, delimiter, doublequote, lineterminator, escapechar, quoting, quotechar,skipinitialspace,stringifier=stringifier,verbosity=verbosity)
                         
-    saveSV.func_doc = modifydocs(saveSV, io.saveSV, 
+    saveSV.__doc__ = modifydocs(saveSV, io.saveSV, 
                                  ":func:`tabular.io.saveSV`")
 
     def savebinary(self, fname, savecoloring=True):
@@ -707,7 +711,7 @@ class tabarray(np.ndarray):
 
         """
         io.savebinary(fname=fname, X=self, savecoloring=savecoloring)
-    savebinary.func_doc = modifydocs(savebinary, io.savebinary, 
+    savebinary.__doc__ = modifydocs(savebinary, io.savebinary, 
                                      ":func:`tabular.io.savebinary`")
 
     def colstack(self, new, mode='abort'):
@@ -727,7 +731,7 @@ class tabarray(np.ndarray):
         else:
             return tab_colstack([self, new], mode)
 
-    colstack.func_doc = modifydocs(colstack, spreadsheet.colstack,  
+    colstack.__doc__ = modifydocs(colstack, spreadsheet.colstack,  
                                    ":func:`tabular.spreadsheet.colstack`")
 
     def rowstack(self, new, mode='nulls'):
@@ -747,7 +751,7 @@ class tabarray(np.ndarray):
         else:
             return tab_rowstack([self, new], mode)
 
-    rowstack.func_doc = modifydocs(rowstack, spreadsheet.rowstack, 
+    rowstack.__doc__ = modifydocs(rowstack, spreadsheet.rowstack, 
                                    ":func:`tabular.spreadsheet.rowstack`")
 
     def aggregate(self, On=None, AggFuncDict=None, AggFunc=None, AggList =
@@ -779,7 +783,7 @@ class tabarray(np.ndarray):
             return [data, s]
         else:
             return data
-    aggregate.func_doc = modifydocs(aggregate, spreadsheet.aggregate, 
+    aggregate.__doc__ = modifydocs(aggregate, spreadsheet.aggregate, 
                                     ":func:`tabular.spreadsheet.aggregate`")
 
     def aggregate_in(self, On=None, AggFuncDict=None, AggFunc=None,
@@ -801,7 +805,7 @@ class tabarray(np.ndarray):
         data.view = self.coloring
         return data
 
-    aggregate_in.func_doc = modifydocs(aggregate_in, spreadsheet.aggregate_in,  
+    aggregate_in.__doc__ = modifydocs(aggregate_in, spreadsheet.aggregate_in,  
                                     ":func:`tabular.spreadsheet.aggregate_in`")
 
     def pivot(self, a, b, Keep=None, NullVals=None, order = None, prefix='_'):
@@ -819,7 +823,7 @@ class tabarray(np.ndarray):
         data.coloring = coloring
         return data
 
-    pivot.func_doc = modifydocs(pivot, spreadsheet.pivot, 
+    pivot.__doc__ = modifydocs(pivot, spreadsheet.pivot, 
                                 ":func:`tabular.spreadsheet.pivot`")
 
     def replace(self, old, new, strict=True, cols=None, rows=None):
@@ -833,7 +837,7 @@ class tabarray(np.ndarray):
     	"""
         spreadsheet.replace(self, old, new, strict, cols, rows)
 
-    replace.func_doc = modifydocs(replace, spreadsheet.replace,
+    replace.__doc__ = modifydocs(replace, spreadsheet.replace,
                                   ":func:`tabular.spreadsheet.replace`")
 
     def join(self, ToMerge, keycols=None, nullvals=None, 

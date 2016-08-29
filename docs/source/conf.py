@@ -1,4 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 #
 # tabular documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul 31 14:01:36 2009.
@@ -37,8 +40,8 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'tabular'
-copyright = u'2013, Elaine Angelino and Daniel Yamins'
+project = 'tabular'
+copyright = '2013, Elaine Angelino and Daniel Yamins'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -190,8 +193,8 @@ htmlhelp_basename = 'tabulardoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'tabular.tex', u'tabular Documentation',
-   u'Daniel Yamins and Elaine Angelino', 'manual'),
+  ('index', 'tabular.tex', 'tabular Documentation',
+   'Daniel Yamins and Elaine Angelino', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

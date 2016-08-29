@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Fast functions for manipulating and comparing numpy ndarrays (and recarrays), 
 e.g. efficient NumPy algorithms for solving list-membership problems:
@@ -182,7 +186,7 @@ def equalspairs(X, Y):
     T = Y.copy()
     R = (T[1:] != T[:-1]).nonzero()[0]
     R = np.append(R,np.array([len(T)-1]))
-    M = R[R.searchsorted(range(len(T)))]
+    M = R[R.searchsorted(list(range(len(T))))]
     D = T.searchsorted(X)
     T = np.append(T,np.array([0]))
     M = np.append(M,np.array([0]))

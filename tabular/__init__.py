@@ -1,16 +1,20 @@
-import io
-import fast
-import spreadsheet
-import tab
-import utils
-import web
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
 
-from io import *
-from fast import *
-from spreadsheet import *
-from tab import *
-from utils import *
-from web import *
+from . import io
+from . import fast
+from . import spreadsheet
+from . import tab
+from . import utils
+from . import web
+
+from .io import *
+from .fast import *
+from .spreadsheet import *
+from .tab import *
+from .utils import *
+from .web import *
 
 __all__ = []
 __all__.extend(io.__all__)

@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Miscellaneous utilities:  uniqify, listunion, listintersection, perminverse
 
@@ -421,7 +425,7 @@ def processformats(L, formats):
     if not (len(formats) == 1 or len(formats) == L):
         msg = 'Wrong number of formats (%d) for number of columns (%s)' % \
                                            (len(formats), str(L))
-        raise ValueError, msg
+        raise ValueError(msg)
     if len(formats) == 1:
         formats = formats*L
     return formats

@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Functions for creating HTML representations of tabular data.
 
 """
 
-from __future__ import with_statement
+
 
 import sys
 import cgi

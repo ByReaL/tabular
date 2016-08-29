@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Spreadsheet-style functions for NumPy ndarray with structured dtype or
 recarray objects:
@@ -183,7 +187,7 @@ def aggregate(X, On=None, AggFuncDict=None, AggFunc=None,
                 assert len(x[1]) == 2
                 AggList[i] = (x[0],) + x[1]
         else:
-            raise ValueError, 'bork'
+            raise ValueError('bork')
 
     Names = [x[0] for x in AggList]
     assert Names == utils.uniqify(Names)
@@ -217,7 +221,7 @@ def aggregate(X, On=None, AggFuncDict=None, AggFunc=None,
                                   DefaultChoices),
                                   v[1])
             else:
-                raise ValueError,'No specific of name for column.'
+                raise ValueError('No specific of name for column.')
         elif len(v) == 3:
             if utils.is_string_like(v[2]):
                 assert isftype(v[1]) and v[2] in X.dtype.names
@@ -276,8 +280,8 @@ def strictaggregate(X,On,AggList,returnsort=False, keyfuncdict=None):
         Diffs = np.array([-1, len(X)])
 
     argcounts = dict([(o,
-         f.func_code.co_argcount - (len(f.func_defaults) if \
-              f.func_defaults != None else 0) if 'func_code' in dir(f) else 1)
+         f.__code__.co_argcount - (len(f.__defaults__) if \
+              f.__defaults__ != None else 0) if 'func_code' in dir(f) else 1)
                  for (o,f,g) in AggList])
 
     OnCols = utils.fromarrays([X[o][Diffs[:-1]+1] for o in On], 
@@ -1290,7 +1294,7 @@ def join(L, keycols=None, nullvals=None, renamer=None,
     commons = set(Commons([l.dtype.names for l in LL])).difference(keycols)
     renaming = {}
     if len(commons) > 0:
-        print 'common attributes, forcing a renaming ...'
+        print('common attributes, forcing a renaming ...')
         if renamer == None:
             print('Using default renamer ...')
             renamer = DEFAULT_RENAMER

@@ -1,10 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 """
 Run from tabular/
 
 """
 
 import unittest
-import cPickle
+try:
+	import pickle
+except NameError:
+	import cPickle as pickle
 import os
 import shutil
 import types
@@ -43,17 +50,17 @@ class TesterCore(unittest.TestCase):
     def assert_io(self, expr, fname):
         if expr:
             delete(fname)
-            self.assert_(expr)
+            self.assertTrue(expr)
         else:
-            self.assert_(expr)
+            self.assertTrue(expr)
 
     def test_empty(self):
         D = tb.tabarray(dtype=self.D.dtype, coloring=self.D.coloring)
-        self.assert_(self.D.dtype==D.dtype)
+        self.assertTrue(self.D.dtype==D.dtype)
 
     def test_save_load_TSV(self):
         fname = TestDataDir + self.Root + '.tsv'
-        print fname
+        print(fname)
         self.D.saveSV(fname, metadata=['names', 'formats', 'types', 'coloring', 'dialect'])
         D = tb.tabarray(SVfile = fname)
         self.assert_io(eq(self.D, D), fname)
@@ -80,26 +87,26 @@ class TesterCore(unittest.TestCase):
         D = self.D[:-1].copy()
         x = self.D[-1].tolist()
         D1 = D.addrecords(x)
-        self.assert_(isinstance(x, tuple) & eq(D1,self.D))
+        self.assertTrue(isinstance(x, tuple) & eq(D1,self.D))
 
     def test_addrecords_void(self):
         D = self.D[:-1].copy()
         x = np.array([self.D[-1]], dtype=self.D.dtype.descr)[0]
         D1 = D.addrecords(x)
-        self.assert_(isinstance(x, np.void) & eq(self.D, D1))
+        self.assertTrue(isinstance(x, np.void) & eq(self.D, D1))
 
     def test_addrecords_record(self):
         D = self.D[:-1].copy()
         x = self.D[-1]
         D1 = D.addrecords(x)
-        self.assert_(eq(self.D, D1))
+        self.assertTrue(eq(self.D, D1))
 
     def test_addrecords_tuples(self):
         ind = len(self.D)/2
         D = self.D[:ind].copy()
         x = self.D[ind:].tolist()
         D1 = D.addrecords(x)
-        self.assert_(isinstance(x[0], tuple) & eq(self.D, D1))
+        self.assertTrue(isinstance(x[0], tuple) & eq(self.D, D1))
 
     def test_addrecords_voids(self):
         ind = len(self.D)/2
@@ -107,31 +114,31 @@ class TesterCore(unittest.TestCase):
         x = np.array([rec for rec in self.D[ind:].tolist()], dtype=self.D.dtype.descr)
         x = [v for v in x]
         D1 = D.addrecords(x)
-        self.assert_(isinstance(x[0], np.void) & eq(self.D, D1))
+        self.assertTrue(isinstance(x[0], np.void) & eq(self.D, D1))
 
     def test_addrecords_records(self):
         ind = len(self.D)/2
         D = self.D[:ind].copy()
         x = self.D[ind:]
         D1 = D.addrecords(x)
-        self.assert_(eq(self.D, D1))
+        self.assertTrue(eq(self.D, D1))
 
     def test_rowstack(self):
         ind = len(self.D)/2
-        self.assert_(eq(self.D, (self.D[:ind]).rowstack(self.D[ind:])))
+        self.assertTrue(eq(self.D, (self.D[:ind]).rowstack(self.D[ind:])))
 
     def test_colstack(self):
         names = list(self.D.dtype.names)
         ind = len(names)/2
-        self.assert_(all(self.D == (self.D[names[:ind]]).colstack(self.D[names[ind:]])))
+        self.assertTrue(all(self.D == (self.D[names[:ind]]).colstack(self.D[names[ind:]])))
 
     def test_equals(self):
         D = self.D
-        self.assert_(eq(self.D, D) and self.D is D)
+        self.assertTrue(eq(self.D, D) and self.D is D)
 
     def test_equals_copy(self):
         D = self.D.copy()
-        self.assert_(eq(self.D, D) and not self.D is D)
+        self.assertTrue(eq(self.D, D) and not self.D is D)
 
 def test_colstack_renaming():
     X = tb.tabarray(columns= [['a','b'],[1,2]],names = ['A','B'],coloring={'Categories':['A']})
@@ -160,48 +167,48 @@ class TestBasic(TesterCore):
         assert self.D[['b', 'a']].dtype.names == ('b', 'a')
 
     def test_getitem_color(self):
-        self.assert_(eq(self.D['moo'], self.D[['a', 'b']]))
+        self.assertTrue(eq(self.D['moo'], self.D[['a', 'b']]))
 
     def test_getitem_color_threshold(self):
         self.assertEqual(self.D[['a', 'b']].coloring, {'moo':['a','b'],'boo': ['a']})
 
     def test_getitem_list_colors(self):
-        self.assert_(eq(self.D[['a', 'boo']], self.D['boo']))
+        self.assertTrue(eq(self.D[['a', 'boo']], self.D['boo']))
 
     def test_replace_int(self):
         D = self.D.copy()
         D.replace(2, 100, cols=['a', 'b', 'e'])
         x = self.D[['a', 'b', 'e']].extract()
         x[x == 2] = 100
-        self.assert_((D[['a', 'b', 'e']].extract() == x).all())
+        self.assertTrue((D[['a', 'b', 'e']].extract() == x).all())
 
     def test_replace_float(self):
         D = self.D.copy()
         D.replace(2.0, 100.0, cols=['a', 'b', 'e'])
         x = self.D[['a', 'b', 'e']].extract()
         x[x == 2.0] = 100.0
-        self.assert_((D[['a', 'b', 'e']].extract() == x).all())
+        self.assertTrue((D[['a', 'b', 'e']].extract() == x).all())
 
     def test_replace_str(self):
         D = self.D.copy()
         D.replace('cc', 'bb', cols=['d'])
         x = self.D.copy()['d']
         x[x == 'cc'] = 'bb'
-        self.assert_(all(D['d'] == x))
+        self.assertTrue(all(D['d'] == x))
 
     def test_replace_str_notstrict(self):
         D = self.D.copy()
         D.replace('cc', 'bb', cols=['d'], strict=False)
         x = self.D.copy()['d']
         x = [row.replace('cc', 'bb') for row in x]
-        self.assert_(all(D['d'] == x))
+        self.assertTrue(all(D['d'] == x))
 
     def test_replace_rows(self):
         D = self.D.copy()
         D.replace('cc', 'bb', cols=['d'], rows=D['a']==2)
         x = self.D.copy()['d']
         x[(x == 'cc') & (D['a'] == 2)] = 'bb'
-        self.assert_(all(D['d'] == x))
+        self.assertTrue(all(D['d'] == x))
 
     def test_toload_tsv(self):
         toload = ['c', 'boo']
@@ -231,7 +238,7 @@ class TestBasic(TesterCore):
             a += [AggFunc(self.D['a'][s][boolvec])]
             b += [AggFunc(self.D['b'][s][boolvec])]
         D2 = tb.tabarray(columns=[e,a,b], names=['e','a','b'], coloring=D1.coloring)
-        self.assert_(eq(D1,D2))
+        self.assertTrue(eq(D1,D2))
 
     def test_aggregate1(self):
         AggFuncDict = {'d': ','.join}
@@ -246,13 +253,13 @@ class TestBasic(TesterCore):
             b += [AggFuncDict['b'](self.D['b'][s][boolvec])]
             d += [AggFuncDict['d'](self.D['d'][s][boolvec])]
         D2 = tb.tabarray(columns=[a, b, d], names=['a', 'b', 'd'], coloring=D1.coloring)
-        self.assert_(eq(D1, D2))
+        self.assertTrue(eq(D1, D2))
 
     def test_aggregate2(self):
         AggFuncDict = {'c': '+'.join, 'd': ','.join}
         [D1,s] = self.D[['a', 'c', 'b', 'd']].aggregate(
                         On=['a', 'b'], AggFuncDict=AggFuncDict,returnsort=True)
-        ab = utils.uniqify(zip(self.D['a'][s], self.D['b'][s]))
+        ab = utils.uniqify(list(zip(self.D['a'][s], self.D['b'][s])))
         c = []
         d = []
         for i in ab:
@@ -263,7 +270,7 @@ class TestBasic(TesterCore):
         D2 = tb.tabarray(
              columns=[[x[0] for x in ab],[x[1] for x in ab], c,d], 
              names=['a', 'b','c', 'd'], coloring=D1.coloring)
-        self.assert_(eq(D1, D2))
+        self.assertTrue(eq(D1, D2))
 
     def test_aggregate_in(self):
         AggFuncDict = {'c': '+'.join, 'd': ','.join}
@@ -271,7 +278,7 @@ class TestBasic(TesterCore):
         D1 = self.D.aggregate_in(On=['a','b'], AggFuncDict=AggFuncDict, 
                  interspersed=False).deletecols(['__aggregates__','__color__'])
         D2 = self.D.rowstack(D)
-        self.assert_(all(D1==D2))
+        self.assertTrue(all(D1==D2))
 
 class TestAddCols(unittest.TestCase):
     def setUp(self):
@@ -290,38 +297,38 @@ class TestAddCols(unittest.TestCase):
 
     def test_1(self):
         Y = self.X.addcols(self.Y[self.n1], names=self.n1)
-        self.assert_(eq(Y,self.Y[[o for o in self.Y.dtype.names 
+        self.assertTrue(eq(Y,self.Y[[o for o in self.Y.dtype.names 
                                   if o != self.n2]]))
 
     def test_2(self):
         Y = self.X.addcols(list(self.Y[self.n1]), names=[self.n1])
-        self.assert_(eq(Y,self.Y[[o for o in self.Y.dtype.names 
+        self.assertTrue(eq(Y,self.Y[[o for o in self.Y.dtype.names 
                                   if o != self.n2]]))
 
     def test_3(self):
         z = np.rec.fromarrays([self.Y[self.n1]], names=[self.n1])
         Y = self.X.addcols(z)
-        self.assert_(eq(Y,self.Y[[o for o in self.Y.dtype.names 
+        self.assertTrue(eq(Y,self.Y[[o for o in self.Y.dtype.names 
                                   if o != self.n2]]))
 
     def test_4(self):
         Y = self.X.addcols([self.Y[self.n1], self.Y[self.n2]], 
                            names=[self.n1, self.n2])
-        self.assert_(eq(Y,self.Y))
+        self.assertTrue(eq(Y,self.Y))
 
     def test_5(self):
         Y = self.X.addcols([self.Y[self.n1], list(self.Y[self.n2])], 
                            names=self.n1 + ',' + self.n2)
-        self.assert_(eq(Y,self.Y))
+        self.assertTrue(eq(Y,self.Y))
 
     def test_6(self):
         Y = self.X.addcols([list(self.Y[self.n1]), list(self.Y[self.n2])], 
                            names=(self.n1 + ', ' + self.n2))
-        self.assert_(eq(Y,self.Y))
+        self.assertTrue(eq(Y,self.Y))
 
     def test_7(self):
         Y = self.X.addcols(self.Y[[self.n1,self.n2]])
-        self.assert_(eq(Y,self.Y))
+        self.assertTrue(eq(Y,self.Y))
 
 
 class TestJoin(unittest.TestCase):
@@ -342,7 +349,7 @@ class TestJoin(unittest.TestCase):
         Z = self.X.copy()
         Z.sort(order  = self.keycols)
         Y.sort(order = self.keycols)
-        self.assert_((Z == Y).all())
+        self.assertTrue((Z == Y).all())
 
     def test_strictjoin2(self):
         ToMerge = [self.X[self.keycols + [x]] for x in self.X.dtype.names 
@@ -351,7 +358,7 @@ class TestJoin(unittest.TestCase):
         Z = self.X.copy()
         Z.sort(order=self.keycols)
         Y.sort(order=self.keycols)
-        self.assert_((Z == Y).all())
+        self.assertTrue((Z == Y).all())
 
     def test_strictjoin3(self):
         X = self.X
@@ -377,7 +384,7 @@ class TestJoin(unittest.TestCase):
         Z = tb.tabarray(records=Recs, names=X.dtype.names)
         Z.sort(order=self.keycols)
 
-        self.assert_((Y == Z).all())
+        self.assertTrue((Y == Z).all())
 
     def test_strictjoin4(self):
         ToMerge = dict([('d' + str(i) , self.X[self.keycols + n]) 
@@ -386,7 +393,7 @@ class TestJoin(unittest.TestCase):
         Y.sort(order=self.keycols)
         Z = self.X.copy()
         Z.sort(order=self.keycols)
-        self.assert_((Z == Y).all())
+        self.assertTrue((Z == Y).all())
 
 
     def test_join(self):
@@ -395,7 +402,7 @@ class TestJoin(unittest.TestCase):
         Y.sort(order = self.keycols)
         Z = self.X.copy()
         Z.sort(order  = self.keycols)
-        self.assert_((Z == Y).all())
+        self.assertTrue((Z == Y).all())
 
     def test_join2(self):
         Y1 = self.X[['Region', 'Sector', 'Amount']].copy()
@@ -408,7 +415,7 @@ class TestJoin(unittest.TestCase):
         Z1.renamecol('Amount', 'Modernized_0')
         Z1.renamecol('Modernized', 'Modernized_1')
 
-        self.assert_((Z1 == Z).all())
+        self.assertTrue((Z1 == Z).all())
 
     def test_join3(self):
         Recs1 = [('North', 'Service', 80.818237828506838),
@@ -442,7 +449,7 @@ class TestJoin(unittest.TestCase):
         Z = Y.join([X[keycols + n] for n in others[1:]])
         X.sort(order=keycols)
         Z.sort(order=keycols)
-        self.assert_(eq(X, Z))
+        self.assertTrue(eq(X, Z))
 
     def test_joinmethod2(self):
         X = self.X.copy()
@@ -460,7 +467,7 @@ class TestJoin(unittest.TestCase):
         Z1.renamecol('Amount', 'Modernized_0')
         Z1.renamecol('Modernized', 'Modernized_1')
 
-        self.assert_(eq(Z, Z1))
+        self.assertTrue(eq(Z, Z1))
 
 def assert_bio(expr, fname):
     if expr:
@@ -483,9 +490,9 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
     def assert_io(self, expr, fname):
         if expr:
             delete(fname)
-            self.assert_(expr)
+            self.assertTrue(expr)
         else:
-            self.assert_(expr)
+            self.assertTrue(expr)
 
     def setUp(self):
         V1 = ['North', 'South', 'East', 'West']
@@ -596,7 +603,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
         X1.saveSV(fname)
         X2 = tb.tabarray(SVfile=fname, 
                     valuefixer=(lambda x: str(int(x)-1) if x.isdigit() else x))           
-        print X1, X2
+        print(X1, X2)
         self.assert_io(eq(X, X2), fname)
         
     def test_missingvals(self):
@@ -642,7 +649,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
         F.close()
         X = tb.tabarray(SVfile=fname,missingvalues={'Age':'N/A'})
         X2 = tb.tabarray(records=[('Daniel', 12, 'M'), ('Elaine', np.nan, 'F'), ('Farish', 46, '')],names=['Name','Age','Gender'])
-        print X, X2
+        print(X, X2)
         self.assert_io(eq(X, X2), fname)
                     
 class TestLoadSaveSVTutorial(unittest.TestCase):
@@ -650,9 +657,9 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
     def assert_io(self, expr, fname):
         if expr:
             delete(fname)
-            self.assert_(expr)
+            self.assertTrue(expr)
         else:
-            self.assert_(expr)
+            self.assertTrue(expr)
 
     def setUp(self):
         names = ['name', 'ID', 'color', 'size', 'June', 'July']
@@ -749,8 +756,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
         g.write(header + '\n' + '\n'.join(f[1:]))
         g.close()
         x = tb.tabarray(SVfile=fname)
-        print x, x.dtype.names,x.coloring
-        print self.x, self.x.dtype.names, self.x.coloring
+        print(x, x.dtype.names,x.coloring)
+        print(self.x, self.x.dtype.names, self.x.coloring)
         self.assert_io(eq(x, self.x), fname)
 
     def test_meta_types(self):
@@ -776,8 +783,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
         self.x.saveSV(fname)
         x = tb.tabarray(SVfile=fname, usecols=[0,-1])
         names=[self.x.dtype.names[i] for i in [0,-1]]
-        print x,x.dtype.names
-        print self.x[names],names
+        print(x,x.dtype.names)
+        print(self.x[names],names)
         self.assert_io(eq(x, self.x[names]), fname)
 
     def test_toload(self):
@@ -792,8 +799,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
         self.x.saveSV(fname)
         [recs, metadata] = tb.loadSVrecs(fname)
         names = metadata['names']
-        print names
-        if 'coloring' in metadata.keys():
+        print(names)
+        if 'coloring' in list(metadata.keys()):
             coloring = metadata['coloring']
         else:
             coloring = {}
@@ -824,7 +831,7 @@ class TesterGetSet(unittest.TestCase):
         self.D1 = self.D.copy()
 
     def test_eq(self):
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_SF(self):
         # n[S][F] = something -- resets n
@@ -832,7 +839,7 @@ class TesterGetSet(unittest.TestCase):
         self.A[1:]['f2'] = x + 1
         self.R[1:]['f2'] = x + 1
         self.D[1:]['f2'] = x + 1
-        self.assert_(neq3(self))
+        self.assertTrue(neq3(self))
 
     def test_FS(self):
         # n[F][S] = something -- resets n
@@ -840,7 +847,7 @@ class TesterGetSet(unittest.TestCase):
         self.A['f2'][1:] = x + 1
         self.R['f2'][1:] = x + 1
         self.D['f2'][1:] = x + 1
-        self.assert_(neq3(self))
+        self.assertTrue(neq3(self))
 
     def test_Fi(self):
         # n[F][i] = something -- resets n
@@ -848,7 +855,7 @@ class TesterGetSet(unittest.TestCase):
         self.A['f2'][[1,3]] = x + 1
         self.R['f2'][[1,3]] = x + 1
         self.D['f2'][[1,3]] = x + 1
-        self.assert_(neq3(self))
+        self.assertTrue(neq3(self))
 
     def test_iF(self):
         # n[i][F] = something -- does nothing
@@ -856,7 +863,7 @@ class TesterGetSet(unittest.TestCase):
         self.A[[1,3]]['f2'] = x + 1
         self.R[[1,3]]['f2'] = x + 1
         self.D[[1,3]]['f2'] = x + 1
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_FS_(self):
         # V = n[F][S], V = something -- does nothing
@@ -867,7 +874,7 @@ class TesterGetSet(unittest.TestCase):
         A = x + 1
         R = x + 1
         D = x + 1
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_Fi_(self):
         # V = n[F][i], V = something -- does nothing
@@ -878,7 +885,7 @@ class TesterGetSet(unittest.TestCase):
         A = x + 1
         R = x + 1
         D = x + 1
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_iF_(self):
         # V = n[i][F], V = something -- does nothing
@@ -889,7 +896,7 @@ class TesterGetSet(unittest.TestCase):
         A = x + 1
         R = x + 1
         D = x + 1
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_Fi_S(self):
         # V = n[F][i], V[S] = something -- does nothing
@@ -900,7 +907,7 @@ class TesterGetSet(unittest.TestCase):
         A[:] = x + 1
         R[:] = x + 1
         D[:] = x + 1
-        self.assert_(eq3(self))
+        self.assertTrue(eq3(self))
 
     def test_FS_S(self):
         # V = n[F][S], V[S] = something -- resets n
@@ -911,7 +918,7 @@ class TesterGetSet(unittest.TestCase):
         A[:] = x + 1
         R[:] = x + 1
         D[:] = x + 1
-        self.assert_(neq3(self))
+        self.assertTrue(neq3(self))
 
     def test_FS_i(self):
         # V = n[F][S], V[i] = something -- resets n
@@ -919,11 +926,11 @@ class TesterGetSet(unittest.TestCase):
         A = self.A['f2'][1:]
         R = self.R['f2'][1:]
         D = self.D['f2'][1:]
-        i = range(len(A)-1)
+        i = list(range(len(A)-1))
         A[i] = x + 1
         R[i] = x + 1
         D[i] = x + 1
-        self.assert_(neq3(self))
+        self.assertTrue(neq3(self))
 
 
 class TesterGetSet_Big(TesterGetSet):
