@@ -5,9 +5,9 @@ python:
 - "2.7"
 - "3.5"
 install:
-- pip install -e .[develop]
+- pip install -e .[test]
 script:
-- nosetests --with-doctest
+- nosetests --with-doctest --with-coverage
 sudo: false
 git:
   depth: 250
