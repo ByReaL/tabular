@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/ByReaL/tabular.png)](https://travis-ci.org/ByReaL/tabular)
+[![Coverage Status](https://coveralls.io/repos/ByReaL/tabular/badge.png?branch=master)](https://coveralls.io/r/ByReaL/tabular?branch=master)
+[![Total Downloads](https://poser.pugx.org/ByReaL/tabular/d/total.png)](https://packagist.org/packages/ByReaL/tabular)
+[![Latest Stable Version](https://poser.pugx.org/ByReaL/tabular/v/stable.png)](https://packagist.org/packages/ByReaL/tabular)
+
+
 Tabular
 ==========
 Tabular data can be easily represented in Python using the language's native objects -- e.g. by lists of tuples representing the records of the data set.    Though easy to create, these kind of representations typically do not enable important tabular data manipulations, like efficient column selection, matrix mathematics, or spreadsheet-style operations. 
