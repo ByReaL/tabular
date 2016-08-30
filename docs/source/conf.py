@@ -14,7 +14,8 @@ from __future__ import absolute_import, print_function, division, unicode_litera
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -28,7 +29,7 @@ sys.path.append(os.path.abspath(os.path.dirname(os.getcwd() + '/../../')))
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates','layout.html']
+templates_path = ['_templates', 'layout.html']
 
 # The suffix of source filenames.
 source_suffix = '.txt'
@@ -89,7 +90,7 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-# Determines if automatically documented members are sorted alphabetical 
+# Determines if automatically documented members are sorted alphabetical
 # (value 'alphabetical', default) or by member type (value 'groupwise').
 autodoc_member_order = 'groupwise'
 
@@ -103,19 +104,19 @@ html_theme = 'default'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-	"bodyfont" : "Century Gothic",
-	"headfont" : "Century Gothic",
-	"headtextcolor" : "#CC3300",
-	"sidebarbgcolor":"#D7EEE3",
-	"footerbgcolor" : "white",
-	"footertextcolor" : "black",
-	"headbgcolor" : "#D7EEE3",
-	"sidebartextcolor" : "#CC3300",
-	"sidebarlinkcolor" : "black",
-	"relbarbgcolor":"#D7EEE3",
-	"relbartextcolor":"#CC3300",
-	"relbarlinkcolor":"#CC3300",
-	"codebgcolor":"#FFFF99"
+    "bodyfont": "Century Gothic",
+    "headfont": "Century Gothic",
+    "headtextcolor": "#CC3300",
+    "sidebarbgcolor": "#D7EEE3",
+    "footerbgcolor": "white",
+    "footertextcolor": "black",
+    "headbgcolor": "#D7EEE3",
+    "sidebartextcolor": "#CC3300",
+    "sidebarlinkcolor": "black",
+    "relbarbgcolor": "#D7EEE3",
+    "relbartextcolor": "#CC3300",
+    "relbarlinkcolor": "#CC3300",
+    "codebgcolor": "#FFFF99"
 }
 
 
@@ -193,8 +194,8 @@ htmlhelp_basename = 'tabulardoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'tabular.tex', 'tabular Documentation',
-   'Daniel Yamins and Elaine Angelino', 'manual'),
+    ('index', 'tabular.tex', 'tabular Documentation',
+     'Daniel Yamins and Elaine Angelino', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

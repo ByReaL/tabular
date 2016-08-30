@@ -11,8 +11,10 @@ e.g. HSV2RGB, GrayScale, etc... returned in web-safe hex triplets.
 
 import math
 
+
 def GrayScale(t):
     return Point2HexColor(0, 0, t)
+
 
 def Point2HexColor(a, lfrac, tfrac):
     """
@@ -20,7 +22,7 @@ def Point2HexColor(a, lfrac, tfrac):
 
     """
 
-    [H,S,V] = [math.floor(360 * a), lfrac, tfrac]
+    [H, S, V] = [math.floor(360 * a), lfrac, tfrac]
 
     RGB = hsvToRGB(H, S, V)
 
@@ -31,9 +33,10 @@ def Point2HexColor(a, lfrac, tfrac):
 
     return '#' + ''.join(HEX)
 
+
 def hsvToRGB(h, s, v):
     """
-    Convert HSV (hue, saturation, value) color space to RGB (red, green blue) 
+    Convert HSV (hue, saturation, value) color space to RGB (red, green blue)
     color space.
 
     **Parameters**
@@ -66,12 +69,12 @@ def hsvToRGB(h, s, v):
 
     """
     hi = math.floor(h / 60.0) % 6
-    f =  (h / 60.0) - math.floor(h / 60.0)
+    f = (h / 60.0) - math.floor(h / 60.0)
     p = v * (1.0 - s)
     q = v * (1.0 - (f * s))
     t = v * (1.0 - ((1.0 - f) * s))
 
-    D = {0: (v, t, p), 1: (q, v, p), 2: (p, v, t), 3: (p, q, v), 4: (t, p, v), 
+    D = {0: (v, t, p), 1: (q, v, p), 2: (p, v, t), 3: (p, q, v), 4: (t, p, v),
          5: (v, p, q)}
 
     return D[hi]
