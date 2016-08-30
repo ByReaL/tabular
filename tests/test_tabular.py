@@ -19,6 +19,7 @@ import numpy as np
 import tabular as tb
 import tabular.utils as utils
 import tabular.spreadsheet as spreadsheet
+import io
 
 
 def delete(ToDelete):
@@ -617,7 +618,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
 
     def test_missingvals(self):
         fname = TestDataDir + 'missingvals.csv'
-        F = open(fname, 'w')
+        F = io.open(fname, 'wt', encoding='utf-8')
         F.write('Name,Age,Gender\nDaniel,12,M\nElaine,N/A,F\nFarish,46,')
         F.close()
         X = tb.tabarray(SVfile=fname, fillingvalues={'Gender': ('', 'N/A'), 'Age': ('N/A', -1)})
@@ -626,7 +627,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
 
     def test_missingvals2(self):
         fname = TestDataDir + 'missingvals2.csv'
-        F = open(fname, 'w')
+        F = io.open(fname, 'wt', encoding='utf-8')
         F.write('Name,Age,Gender\nDaniel,12,M\nElaine,N/A,F\nFarish,46,')
         F.close()
         X = tb.tabarray(SVfile=fname, fillingvalues={2: ('', 'N/A'), 'Age': ('N/A', -1)})
@@ -635,7 +636,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
 
     def test_missingvals3(self):
         fname = TestDataDir + 'missingvals3.csv'
-        F = open(fname, 'w')
+        F = io.open(fname, 'wt', encoding='utf-8')
         F.write('Name,Age,Gender\nDaniel,12,M\nElaine,N/A,F\nFarish,46,')
         F.close()
         X = tb.tabarray(SVfile=fname, fillingvalues=(('', ''), ('N/A', -1), ('', 'N/A')))
@@ -644,7 +645,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
 
     def test_missingvals4(self):
         fname = TestDataDir + 'missingvals4.csv'
-        F = open(fname, 'w')
+        F = io.open(fname, 'wt', encoding='utf-8')
         F.write('Name,Age,Gender\nDaniel,12,M\nElaine,'',F\nFarish,46,')
         F.close()
         X = tb.tabarray(SVfile=fname)
@@ -653,7 +654,7 @@ class TestLoadSaveSV(unittest.TestCase):        # test non-default use cases
 
     def test_missingvals5(self):
         fname = TestDataDir + 'missingvals5.csv'
-        F = open(fname, 'w')
+        F = io.open(fname, 'wt', encoding='utf-8')
         F.write('Name,Age,Gender\nDaniel,12,M\nElaine,N/A,F\nFarish,46,')
         F.close()
         X = tb.tabarray(SVfile=fname, missingvalues={'Age': 'N/A'})
@@ -719,8 +720,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
     def test_verbose(self):
         fname = TestDataDir + 'verbose.tsv'
         self.x.saveSV(fname, comments='#')
-        f = open(fname, 'r').read()
-        g = open(fname, 'w')
+        f = io.open(fname, 'rt', encoding='utf-8').read()
+        g = io.open(fname, 'wt', encoding='utf-8')
         verbose = '\n'.join(['#this is my file', '#these are my verbose notes',
                              '#blah blah blah'])
         g.write(verbose + '\n' + f)
@@ -731,8 +732,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
     def test_nohash(self):
         fname = TestDataDir + 'nohash.tsv'
         self.x.saveSV(fname, comments='')
-        f = open(fname, 'r').read()
-        g = open(fname, 'w')
+        f = io.open(fname, 'rt', encoding='utf-8').read()
+        g = io.open(fname, 'wt', encoding='utf-8')
         g.write('this is my file\n' + f)
         g.close()
         x = tb.tabarray(SVfile=fname, headerlines=2)
@@ -747,8 +748,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
     def test_meta_nohash(self):
         fname = TestDataDir + 'meta_nohash.tsv'
         self.x.saveSV(fname)
-        f = open(fname, 'r').read()
-        g = open(fname, 'w')
+        f = io.open(fname, 'rt', encoding='utf-8').read()
+        g = io.open(fname, 'wt', encoding='utf-8')
         header = '\n'.join(["metametadata={'names': 3}",
                             'these are my verbose notes', 'blah blah blah'])
         g.write(header + '\n' + f)
@@ -759,8 +760,8 @@ class TestLoadSaveSVTutorial(unittest.TestCase):
     def test_meta_random(self):
         fname = TestDataDir + 'meta_random.tsv'
         self.x.saveSV(fname)
-        f = open(fname, 'r').read().split('\n')
-        g = open(fname, 'w')
+        f = io.open(fname, 'rt', encoding='utf-8').read().split('\n')
+        g = io.open(fname, 'wt', encoding='utf-8')
         header = '\n'.join(['#this is my file', "#metametadata={'names': 2}",
                             '#' + f[0], '#not sure why there are more notes here'])
         g.write(header + '\n' + '\n'.join(f[1:]))
