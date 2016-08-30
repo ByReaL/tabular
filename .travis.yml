@@ -7,7 +7,7 @@ python:
 install:
 - pip install -e .[test]
 script:
-- nosetests --with-doctest --with-coverage
+- nosetests --with-doctest --with-coverage --cover-package=tabular --cover-min-percentage=11
 sudo: false
 git:
   depth: 250
